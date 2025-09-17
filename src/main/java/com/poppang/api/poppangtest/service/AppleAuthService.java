@@ -8,6 +8,7 @@ import com.poppang.api.poppangtest.dto.AppleTokenResponse;
 // client_secret(JWT) 생성 유틸. .p8 키로 ES256 서명된 JWT를 만들어줌.
 import com.poppang.api.poppangtest.util.AppleJwtUtil;
 import com.poppang.api.poppangtest.util.AppleJwtVerifier;
+import com.poppang.api.poppangtest.entity.User;
 
 // === [롬복/스프링/HTTP/유틸 임포트] ======================================
 // Lombok: final 필드 기반 생성자를 자동 생성(@RequiredArgsConstructor)
@@ -35,6 +36,9 @@ public class AppleAuthService {
 
     // HTTP 요청 전송용 클라이언트
     private final RestTemplate restTemplate = new RestTemplate();
+
+    // UserService 주입
+    private final UserService userService;
 
     // 토큰 교환 메서드
     private AppleTokenResponse exchange(String authorizationCode) throws Exception {
@@ -95,7 +99,7 @@ public class AppleAuthService {
      * - 2) id_token 검증
      * - 3) 검증된 사용자 정보 반환
      */
-    public JWTClaimsSet login(String authorizationCode) throws Exception {
+    public User login(String authorizationCode) throws Exception {
         // 1. 토큰 교환
         AppleTokenResponse tokenResponse = exchange(authorizationCode);
 
@@ -105,14 +109,23 @@ public class AppleAuthService {
                 properties.getClientId()
         );
 
+        // 3. Apple Sub추출
+        String sub = claims.getSubject();
+
+        // 4. DB 확인
+        User user = userService.findOrCreateUser(sub, "Apple");
+
         // 3. 로그 출력
+        /*
         String sub = claims.getSubject();
         String email = claims.getStringClaim("email");
 
         System.out.println("✅ Apple 로그인 성공");
         System.out.println(" - sub(고유ID): " + sub);
         System.out.println(" - email: " + email);
+        */
 
-        return claims;
+
+        return user;
     }
 }
