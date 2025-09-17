@@ -13,7 +13,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 
 
 // local
-import com.poppang.api.poppangtest.dto.User;
+import com.poppang.api.poppangtest.entity.User;
 import com.poppang.api.poppangtest.dto.AppleTokenResponse;
 import com.poppang.api.poppangtest.service.AppleAuthService;
 
