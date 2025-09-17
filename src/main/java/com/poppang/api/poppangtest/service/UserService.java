@@ -10,9 +10,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PropertyResolver propertyResolver;
 
-    public User getUserByUsername(String uid, String provider) {
+    public User findOrCreateUser(String uid, String provider) {
         return userRepository.findById(uid)
                 .orElseGet(() -> {
                     User newUser = User.builder()
