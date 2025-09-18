@@ -113,19 +113,9 @@ public class AppleAuthService {
         String sub = claims.getSubject();
 
         // 4. DB 확인
-        User user = userService.findOrCreateUser(sub, "Apple");
-
-        // 3. 로그 출력
-        /*
-        String sub = claims.getSubject();
-        String email = claims.getStringClaim("email");
-
-        System.out.println("✅ Apple 로그인 성공");
-        System.out.println(" - sub(고유ID): " + sub);
-        System.out.println(" - email: " + email);
-        */
-
-
-        return user;
+        return userService.findUserByUid(sub)
+                .orElseGet(() ->
+                        userService.createUser(sub, "apple") // ✅ 닉네임 기본값 or 별도 입력
+                );
     }
 }

@@ -12,13 +12,23 @@ import java.time.LocalDateTime;
 @AllArgsConstructor           // 모든 필드 생성자 자동 생성
 @Builder                      // 빌더 패턴 지원
 public class User {
-
     @Id
-    @Column(nullable = false, unique = true, length = 100)
-    private String id;              // ✅ Apple sub / Google sub / Kakao id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)   // AUTO_INCREMENT 매핑
+    private Long id;   // 유저 PK (BIGINT)
 
+    @Column(nullable = false, unique = true, length = 255)
+    private String uid;   // 소셜 로그인 유저 ID (Google/Apple/Kakao 등)
+
+    @Column(nullable = true, length = 255)
+    private String nickname;   // 닉네임 (NULL 허용)
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String provider;        // 가입 플랫폼 (apple, google, kakao)
+    private Role role;   // 회원/관리자
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Provider provider;   // 가입 플랫폼
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -27,19 +37,31 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    private boolean isDeleted = false;
 
-    // 최초 insert 시 자동 설정
+    @Column(name = "is_alerted", nullable = false)
+    private boolean isAlerted = false;
+
+    @Column(name = "fcm_token", length = 255)
+    private String fcmToken;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.isDeleted = false;
     }
 
-    // update 시 자동 설정
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // ENUM 정의
+    public enum Role {
+        member, admin
+    }
+
+    public enum Provider {
+        google, apple, kakao
     }
 }
