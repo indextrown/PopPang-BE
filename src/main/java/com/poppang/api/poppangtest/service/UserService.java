@@ -13,10 +13,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 신규 생성
-    public User createUser(String uid, String provider) {
+    public User createUser(String uid, String provider, String email) {
         User newUser = User.builder()
                 .uid(uid)
                 .provider(User.Provider.valueOf(provider))  // enum 변환
+                .email(email)
                 .role(User.Role.member)  // 기본값 설정 가능
                 .build();
         return userRepository.save(newUser);

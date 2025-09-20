@@ -112,10 +112,13 @@ public class AppleAuthService {
         // 3. Apple Sub추출
         String sub = claims.getSubject();
 
+        String uid = "apple-" + sub;
+        String email = claims.getStringClaim("email");
+
         // 4. DB 확인
-        return userService.findUserByUid(sub)
+        return userService.findUserByUid(uid)
                 .orElseGet(() ->
-                        userService.createUser(sub, "apple") // ✅ 닉네임 기본값 or 별도 입력
+                        userService.createUser(uid, "apple", email) // ✅ 닉네임 기본값 or 별도 입력
                 );
     }
 }

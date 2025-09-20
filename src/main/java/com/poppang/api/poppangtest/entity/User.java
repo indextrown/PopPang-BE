@@ -20,6 +20,9 @@ public class User {
     private String uid;   // 소셜 로그인 유저 ID (Google/Apple/Kakao 등)
 
     @Column(nullable = true, length = 255)
+    private String email;
+
+    @Column(nullable = true, length = 255)
     private String nickname;   // 닉네임 (NULL 허용)
 
     @Enumerated(EnumType.STRING)
